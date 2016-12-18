@@ -14,14 +14,11 @@ tiles.addTo(map);
 
 function addDataToMap(data, map) {
 
-    /*  data.features.sort(function (a, b) {
-          return b.properties.mag - a.properties.mag;
-      }); */
-
     var dataLayer = L.geoJson(data, {
+    
         pointToLayer: function (feature, latlng) {
             return L.circleMarker(latlng, {
-                color: 'orange',
+                color: 'red',
                 weight: 1,
                 stroke: 2,
                 //fillOpacity: .8,
@@ -35,9 +32,13 @@ function addDataToMap(data, map) {
 
 
     });
+    
+    data.features.sort(function (a, b) {
+          return b.properties.mag - a.properties.mag;
+      });
+    
     dataLayer.addTo(map);
 }
-
 
 
 $.getJSON("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson", function (data) {
