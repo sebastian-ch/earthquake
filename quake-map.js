@@ -4,10 +4,9 @@ var map = L.map('map', {
 });
 
 
-var tiles = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-    subdomains: 'abcd',
-    maxZoom: 18
+var tiles = L.tileLayer('http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
+	maxZoom: 18,
+	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 });
 
 
@@ -41,7 +40,7 @@ function addDataToMap(data, map) {
 
 
 
-$.getJSON("http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson", function (data) {
+$.getJSON("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson", function (data) {
     addDataToMap(data, map);
 });
 
