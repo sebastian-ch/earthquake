@@ -1,0 +1,123 @@
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <title>Earthquake Map</title>
+
+    <link href="https://api.mapbox.com/mapbox-assembly/v0.12.0/assembly.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" rel="stylesheet" />
+    <script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+
+    <script src="lib/jsonQ.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script async defer src="https://api.mapbox.com/mapbox-assembly/v0.12.0/assembly.js"></script>
+
+    <style>
+        #map {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+    </style>
+
+</head>
+
+<body>
+    <div class='viewport-full relative clip'>
+        <div class='bg-darken10 viewport-twothirds viewport-full-ml absolute top left right bottom'>
+            <div id='map'></div>
+        </div>
+        <div class='absolute top-ml right bottom z1 w-full w300-ml p12-ml'>
+
+            <div class='flex-parent flex-parent--column viewport-third h-auto-ml hmax-full bg-white round-ml shadow-darken5'>
+                <div class='p12 scroll-auto'>
+                    <h2 class='txt-m txt-bold mb6'>Today's Earthquakes above 1.0M</h2>
+                    <h4>Largest Earthquakes Today</h4>
+                    <ul id='list'>
+
+
+                    </ul>
+
+                    <p>here's some text!</p>
+                </div>
+                <footer class='p12 bg-gray-faint round-b-ml txt-s'>
+                    Footer content here
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var options = {
+                center: [34, -13],
+                zoom: 2.5
+            },
+            tileUrl = 'http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
+            tileOptions = {
+                maxZoom: 18,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            },
+
+            map = L.map('map', options),
+            tiles = L.tileLayer(tileUrl, tileOptions).addTo(map),
+            geoJsonUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson";
+
+        $.getJSON(geoJsonUrl, function(data) {
+
+            drawMap(data);
+
+        });
+
+
+        function drawMap(data) {
+            //console.log(data);
+
+            var dataLayer = L.geoJson(data, {
+
+                pointToLayer: function(feature, latlng) {
+
+                    return L.circleMarker(latlng, {
+                        color: '#f06060',
+                        weight: 1,
+                        stroke: 2,
+                        radius: feature.properties.mag * 6
+                    });
+                },
+
+                onEachFeature: function(feature, layer) {
+
+                    var popupText = "<b>Magnitude:</b> " + feature.properties.mag +
+                        "<br><b>Place:</b> " + feature.properties.place +
+                        "<br><a href=" + feature.properties.url + ' target="_blank">More Details</a>';
+                    layer.bindPopup(popupText);
+                }
+
+            }).addTo(map);
+
+            getTopFive(data);
+        }
+
+        function getTopFive(data) {
+
+            var earthquakes = jsonQ(data);
+            
+            console.log(earthquakes);
+
+            var orderedEQ = earthquakes.sort('mag', {
+                order: "DESC"
+            });
+
+            var count = 0;
+            var topFive = [];
+
+            console.log(orderedEQ.value());
+
+            }
+
+
+    </script>
+</body>
+
+</html>
